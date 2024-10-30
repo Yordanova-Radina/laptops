@@ -13,7 +13,7 @@ while ($row = $stmt->fetch()) {
     }
 }
 
-debug($products);
+//debug($products);
 
 if (!empty($search)) {
     setcookie('last_search', $search, time() + 3600, '/', 'localhost', false, false);
