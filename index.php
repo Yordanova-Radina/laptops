@@ -3,7 +3,8 @@
 require_once('./functions.php');
 require_once('./db.php');
 
-debug($pdo);
+//debug($pdo);
+//debug($_SESSION);
 
 $page = $_GET['page'] ?? 'home';
 //debug($_COOKIE);
@@ -21,9 +22,22 @@ $page = $_GET['page'] ?? 'home';
     <!-- Bootstrap 5.3 CSS CDN -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+    <!-- jquery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+
 </head>
 
 <body>
+    <script>
+        $(function() {
+            $(document).on('click', '.add-favorite', function() {
+                console.log('clicked');
+                let productId = $(this).data('product');
+                console.log(productId);
+            });
+        });
+    </script>
     <header>
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark py-3">
             <div class="container-fluid">
@@ -47,7 +61,7 @@ $page = $_GET['page'] ?? 'home';
                     <div class="d-flex flex-row gap-3">
                         <?php
                         if (isset($_SESSION['user_name'])) {
-                            echo '<span class="text-white"> Здравейте, ' . $_SESSION['user_name'] . '</span>';
+                            echo '<span class="text-white"> Здравейте, ' . htmlspecialchars($_SESSION['user_name']) . '</span>';
                             echo '
                             <form method="POST" action="./handlers/handel_logout.php" class="m-0">
                                 <button type="submit" class="btn-outline-light">Изход</button>

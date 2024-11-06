@@ -5,12 +5,11 @@ $products = [];
 $search = $_GET['search'] ?? '';
 
 //правим заявка към БД
-$query = "SELECT * FROM products";
-$stmt = ($pdo->query($query));
+$query = "SELECT * FROM products WHERE title LIKE :search";
+$stmt = ($pdo->prepare($query));
+$stmt->execute([':search' => "%$search%"]);
 while ($row = $stmt->fetch()) {
-    if (empty($search) || (!empty($search) && str_contains(mb_strtolower($row['title']), mb_strtolower($search)))) {
-        $products[] = $row;
-    }
+    $products[] = $row;
 }
 
 //debug($products);
@@ -46,15 +45,24 @@ if (count($products) == 0) {
             </div>
         ';
 } else {
-    echo ' <div class="d-flex flex-wrap justify-content-between">.';
+    echo ' <div class="d-flex flex-wrap justify-content-between">';
     foreach ($products as $product) {
+        $fav_btn = '';
+        if (isset($_SESSION['user_name'])) {
+            $fav_btn = '
+            <div class="card-footer text-center">
+                            <button class="btn btn-primary btn-sm add-favorite"  data-product="' . $product['id'] . '">Добави в любими</button>
+                        </div>
+            ';
+        }
         echo '
                 <div class="card mb-4" style="width: 18rem;">
-                    <img src="' . $product['image'] . '" class="card-img-top" alt="Product Image">
+                    <img src="' . htmlspecialchars($product['image']) . '" class="card-img-top" alt="Product Image">
                     <div class="card-body">
-                        <h5 class="card-title">' . $product['title'] . '</h5>
-                        <p class="card-text">' . $product['price'] . '</p>
+                        <h5 class="card-title">' . htmlspecialchars($product['title']) . '</h5>
+                        <p class="card-text">' . htmlspecialchars($product['price']) . '</p>
                     </div>
+                        ' . $fav_btn . '
                 </div>
             ';
     }
