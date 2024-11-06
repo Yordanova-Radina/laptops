@@ -43,6 +43,7 @@ $page = $_GET['page'] ?? 'home';
                             <a class="nav-link <?php echo ($page == 'contacts' ? 'active' : ''); ?>" href="?page=contacts">Контакти</a>
                         </li>
                     </ul>
+
                     <div class="d-flex flex-row gap-3">
                         <?php
                         if (isset($_SESSION['user_name'])) {
@@ -56,21 +57,6 @@ $page = $_GET['page'] ?? 'home';
                             ';
                         } else {
                             echo '<a href="?page=login" class= "btn btn-outline-light">Вход</a>';
-                        }
-                        ?>
-                    </div>
-                    <div class="d-flex flex-row gap-3">
-                        <?php
-                        if (isset($_SESSION['user_name'])) {
-                            echo '<span class="text-white"> Здравейте, ' . $_SESSION['user_name'] . '</span>';
-                            echo '
-                            <form method="POST" action="./handlers/handel_register.php" class="m-0">
-                                <button type="submit" class="btn-outline-light">Изход</button>
-
-                            </form>
-
-                            ';
-                        } else {
                             echo '<a href="?page=register" class= "btn btn-outline-light">Регистрация</a>';
                         }
                         ?>
@@ -81,6 +67,10 @@ $page = $_GET['page'] ?? 'home';
     </header>
     <main class="container py-4" style="min-height:80vh;">
         <?php
+        if (isset($_GET['error'])) {
+            echo '<div class="alert alert-danger">' . $_GET['error'] . '</div>';
+        }
+
         if (file_exists('pages/' . $page . '.php')) {
             require_once('pages/' . $page . '.php');
         } else {

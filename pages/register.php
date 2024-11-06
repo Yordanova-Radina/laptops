@@ -1,8 +1,6 @@
 <?php
 // страница register
-if (isset($_GET['error'])) {
-    echo '<div class="alert alert-danger">' . $_GET['error'] . '</div>';
-}
+
 ?>
 
 <form class="border rounded p-4 w-50 mx-auto" method="POST" action="./handlers/handel_register.php">
