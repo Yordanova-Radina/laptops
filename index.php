@@ -7,6 +7,15 @@ require_once('./db.php');
 //debug($_SESSION);
 
 $page = $_GET['page'] ?? 'home';
+
+$flash = [];
+if (isset($_SESSION['flash'])) {
+    $flash = $_SESSION['flash'];
+    unset($_SESSION['flash']);
+}
+//debug($flash);
+
+
 //debug($_COOKIE);
 
 
@@ -31,10 +40,65 @@ $page = $_GET['page'] ?? 'home';
 <body>
     <script>
         $(function() {
+            //Добавяне в любими
             $(document).on('click', '.add-favorite', function() {
-                console.log('clicked');
-                let productId = $(this).data('product');
-                console.log(productId);
+                let btn = $(this);
+                let productId = btn.data('product');
+
+
+                $.ajax({
+                    url: './ajax/add_favorite.php',
+                    method: 'POST',
+                    data: {
+                        product_id: productId
+                    },
+                    success: function(response) {
+                        let res = JSON.parse(response);
+                        console.log(res);
+
+                        if (res.success) {
+                            alert('Продуктът беше добавен в любими');
+                            let removeBtn = $(`<button class="btn btn-danger btn-sm remove-favorite"  data-product="${productId}">Премахни от любими</button>`);
+                            btn.replaceWith(removeBtn);
+
+                        } else {
+                            alert('Възникна грешка ' + res.error);
+                        }
+                    },
+                    error: function(error) {
+                        console.log(error);
+                    }
+                });
+            });
+            //Премахване от любими
+            $(document).on('click', '.remove-favorite', function() {
+                let btn = $(this);
+                let productId = btn.data('product');
+
+
+                $.ajax({
+                    url: './ajax/remove_favorite.php',
+                    method: 'POST',
+                    data: {
+                        product_id: productId
+                    },
+                    success: function(response) {
+                        let res = JSON.parse(response);
+
+
+                        if (res.success) {
+                            alert('Продуктът беше премахнат от любими');
+                            let addBtn = $(`<button class="btn btn-primary btn-sm add-favorite"  data-product="${productId}">Добави в любими</button>`);
+                            btn.replaceWith(addBtn);
+
+                        } else {
+                            alert('Възникна грешка ' + res.error);
+                        }
+                    },
+                    error: function(error) {
+                        console.log(error);
+                    }
+                });
             });
         });
     </script>
@@ -81,8 +145,12 @@ $page = $_GET['page'] ?? 'home';
     </header>
     <main class="container py-4" style="min-height:80vh;">
         <?php
-        if (isset($_GET['error'])) {
-            echo '<div class="alert alert-danger">' . $_GET['error'] . '</div>';
+        if (isset($flash['message'])) {
+            echo '
+            <div class="alert alert-' . $flash['message']['type'] . '" role="alert">
+                ' . $flash['message']['text'] . '
+                </div>
+            ';
         }
 
         if (file_exists('pages/' . $page . '.php')) {

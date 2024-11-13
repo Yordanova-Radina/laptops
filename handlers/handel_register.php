@@ -14,7 +14,10 @@ foreach ($_POST as $key => $value) {
 }
 
 if (mb_strlen($error) > 0) {
-    header('Location: ../index.php?page=register&error=' . $error);
+    $_SESSION['flash']['message']['type'] = 'danger';
+    $_SESSION['flash']['message']['text'] = $error;
+    $_SESSION['flash']['data'] = $_POST;
+    header('Location: ../index.php?page=register');
 } else {
     $names = trim($_POST['names']);
     $email = trim($_POST['email']);
@@ -27,18 +30,24 @@ if (mb_strlen($error) > 0) {
     $stmt->execute([$email]);
     $user = $stmt->fetch();
 
-    debug($user, true);
+    //debug($user, true);
 
     if ($user) {
         //debug($user, true);
         $error = 'Възникна грешка!';
-        header('Location: ../index.php?page=register&error=' . $error);
+        $_SESSION['flash']['message']['type'] = 'danger';
+        $_SESSION['flash']['message']['text'] = $error;
+        $_SESSION['flash']['data'] = $_POST;
+        header('Location: ../index.php?page=register');
         exit;
     }
 
     if ($password != $repeat_password) {
         $error = 'Паролите не съвпадат!';
-        header('Location: ../index.php?page=register&error=' . $error);
+        $_SESSION['flash']['message']['type'] = 'danger';
+        $_SESSION['flash']['message']['text'] = $error;
+        $_SESSION['flash']['data'] = $_POST;
+        header('Location: ../index.php?page=register');
         exit;
     } else {
         $password = password_hash($password, PASSWORD_ARGON2I);
@@ -50,11 +59,16 @@ if (mb_strlen($error) > 0) {
             'password' => $password
         ];
         if ($stmt->execute($params)) {
+            $_SESSION['flash']['message']['type'] = 'success';
+            $_SESSION['flash']['message']['text'] = "Успешна регистрация";
             header('Location: ../index.php?page=home');
             exit;
         } else {
             $error = 'Възникна грешка!';
-            header('Location: ../index.php?page=register&error=' . $error);
+            $_SESSION['flash']['message']['type'] = 'danger';
+            $_SESSION['flash']['message']['text'] = $error;
+            $_SESSION['flash']['data'] = $_POST;
+            header('Location: ../index.php?page=register');
             exit;
         }
     }

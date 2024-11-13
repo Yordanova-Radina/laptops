@@ -9,6 +9,15 @@ $query = "SELECT * FROM products WHERE title LIKE :search";
 $stmt = ($pdo->prepare($query));
 $stmt->execute([':search' => "%$search%"]);
 while ($row = $stmt->fetch()) {
+    $fav_query = "SELECT id FROM favorite_products_users WHERE user_id = :user_id AND product_id = :product_id";
+    $fav_stmt = $pdo->prepare($fav_query);
+    $fav_params = [
+        ':user_id' => $_SESSION['user_id'] ?? 0,
+        ':product_id' => $row['id']
+    ];
+    $fav_stmt->execute($fav_params);
+    $row['is_favorite'] = $fav_stmt->fetch() ? 1 : 0;
+
     $products[] = $row;
 }
 
@@ -49,11 +58,19 @@ if (count($products) == 0) {
     foreach ($products as $product) {
         $fav_btn = '';
         if (isset($_SESSION['user_name'])) {
-            $fav_btn = '
+            if ($product['is_favorite'] == '1') {
+                $fav_btn = '
+                <div class="card-footer text-center">
+                            <button class="btn btn-danger btn-sm remove-favorite"  data-product="' . $product['id'] . '">Премахни от любими</button>
+                        </div>
+                ';
+            } else {
+                $fav_btn = '
             <div class="card-footer text-center">
                             <button class="btn btn-primary btn-sm add-favorite"  data-product="' . $product['id'] . '">Добави в любими</button>
                         </div>
             ';
+            }
         }
         echo '
                 <div class="card mb-4" style="width: 18rem;">
