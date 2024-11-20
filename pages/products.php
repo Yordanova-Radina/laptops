@@ -74,7 +74,14 @@ if (count($products) == 0) {
         }
         echo '
                 <div class="card mb-4" style="width: 18rem;">
-                    <img src="' . htmlspecialchars($product['image']) . '" class="card-img-top" alt="Product Image">
+                    <div class="card-header d-flex flex-row justify-content-between">
+                        <a href="?page=edit_product&id=' . $product['id'] . '" class="btn btn-sm btn-warning">Редактирай</a>
+                        <form method="POST" action="./handlers/handel_delete_product.php">
+                            <input type="hidden" name="id" value="' . $product['id'] . '">
+                            <button type="submit" class="btn btn-sm btn-danger">Изтрий</button>
+                        </form>
+                    </div>
+                    <img src="uploads/' . htmlspecialchars($product['image']) . '" class="card-img-top" alt="Product Image">
                     <div class="card-body">
                         <h5 class="card-title">' . htmlspecialchars($product['title']) . '</h5>
                         <p class="card-text">' . htmlspecialchars($product['price']) . '</p>

@@ -120,6 +120,9 @@ if (isset($_SESSION['flash'])) {
                         <li class="nav-item">
                             <a class="nav-link <?php echo ($page == 'contacts' ? 'active' : ''); ?>" href="?page=contacts">Контакти</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link <?php echo ($page == 'add_product' ? 'active' : ''); ?>" href="?page=add_product">Добави продукт</a>
+                        </li>
                     </ul>
 
                     <div class="d-flex flex-row gap-3">
