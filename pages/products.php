@@ -56,7 +56,7 @@ if (count($products) == 0) {
 } else {
     echo ' <div class="d-flex flex-wrap justify-content-between">';
     foreach ($products as $product) {
-        $fav_btn = '';
+        $fav_btn = $edit_delete_buttons = '';
         if (isset($_SESSION['user_name'])) {
             if ($product['is_favorite'] == '1') {
                 $fav_btn = '
@@ -72,15 +72,20 @@ if (count($products) == 0) {
             ';
             }
         }
-        echo '
-                <div class="card mb-4" style="width: 18rem;">
-                    <div class="card-header d-flex flex-row justify-content-between">
+        if (is_admin()) {
+            $edit_delete_buttons = ' 
+            <div class="card-header d-flex flex-row justify-content-between">
                         <a href="?page=edit_product&id=' . $product['id'] . '" class="btn btn-sm btn-warning">Редактирай</a>
                         <form method="POST" action="./handlers/handel_delete_product.php">
                             <input type="hidden" name="id" value="' . $product['id'] . '">
                             <button type="submit" class="btn btn-sm btn-danger">Изтрий</button>
                         </form>
                     </div>
+                    ';
+        }
+        echo '
+                <div class="card mb-4" style="width: 18rem;"> ' . $edit_delete_buttons . '
+                   
                     <img src="uploads/' . htmlspecialchars($product['image']) . '" class="card-img-top" alt="Product Image">
                     <div class="card-body">
                         <h5 class="card-title">' . htmlspecialchars($product['title']) . '</h5>

@@ -3,6 +3,14 @@
 require_once('../functions.php');
 require_once('../db.php');
 
+if (!is_admin()) {
+    $_SESSION['flash']['message']['type'] = 'warning';
+    $_SESSION['flash']['message']['text'] = 'Нямате достъп до тази страница!';
+
+    header('Location: ../index.php');
+    exit;
+}
+
 $product_id = intval($_POST['id'] ?? 0);
 
 if ($product_id == 0) {

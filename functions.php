@@ -9,4 +9,9 @@ function debug($data, $exit = false) {
         exit;
     }
 }
+
+function is_admin(){
+    return isset($_SESSION['is_admin']) && $_SESSION['is_admin'] == 2;
+}
+
 ?>

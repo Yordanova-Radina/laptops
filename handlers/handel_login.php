@@ -22,11 +22,12 @@ if (!password_verify($password, $user['password'])) {
     exit;
 }
 
-
+//debug($user, true);
 session_start();
 $_SESSION['user_name'] = $user['names'];
 $_SESSION['user_email'] = $user['email'];
 $_SESSION['user_id'] = $user['id'];
+$_SESSION['is_admin'] = $user['is_admin'];
 
 //сетваме бисквитка
 setcookie('user_email', $user['email'], time() + 3600, '/', 'localhost', false, true);

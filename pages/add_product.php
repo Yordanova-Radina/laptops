@@ -1,5 +1,6 @@
 <?php
 // добавяне на продукт
+
 ?>
 
 <form class="border rounded p-4 w-50 mx-auto" method="POST" action="./handlers/handel_add_product.php" enctype="multipart/form-data">

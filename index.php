@@ -13,6 +13,17 @@ if (isset($_SESSION['flash'])) {
     $flash = $_SESSION['flash'];
     unset($_SESSION['flash']);
 }
+
+$admin_pages = ['add_product', 'edit_product'];
+
+if (!is_admin() && in_array($page, $admin_pages)) {
+    $_SESSION['flash']['message']['type'] = 'warning';
+    $_SESSION['flash']['message']['text'] = 'Нямате достъп до тази страница!';
+
+    header('Location: index.php');
+    exit;
+}
+
 //debug($flash);
 
 
@@ -35,11 +46,16 @@ if (isset($_SESSION['flash'])) {
     <!-- jquery -->
     <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
 
+    <!--sweetalert2-->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.14.5/dist/sweetalert2.all.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.14.5/dist/sweetalert2.min.css" rel="stylesheet">
+
 </head>
 
 <body>
     <script>
         $(function() {
+
             //Добавяне в любими
             $(document).on('click', '.add-favorite', function() {
                 let btn = $(this);
@@ -57,12 +73,37 @@ if (isset($_SESSION['flash'])) {
                         console.log(res);
 
                         if (res.success) {
-                            alert('Продуктът беше добавен в любими');
+                            Swal.fire({
+                                title: 'Продуктът беше добавен в любими',
+                                icon: 'success',
+                                toast: true,
+                                position: 'top',
+                                showConfirmButton: false,
+                                timer: 8000,
+                                timerProgressBar: true,
+                                didOpen: (toast) => {
+                                    toast.onmouseenter = Swal.stopTimer;
+                                    toast.onmouseleave = Swal.resumeTimer;
+                                }
+                            });
                             let removeBtn = $(`<button class="btn btn-danger btn-sm remove-favorite"  data-product="${productId}">Премахни от любими</button>`);
                             btn.replaceWith(removeBtn);
 
                         } else {
-                            alert('Възникна грешка ' + res.error);
+                            Swal.fire({
+                                title: 'Възникна грешка ' + res.error,
+                                icon: 'error',
+                                toast: true,
+                                position: 'top',
+                                showConfirmButton: false,
+                                timer: 8000,
+                                timerProgressBar: true,
+                                didOpen: (toast) => {
+                                    toast.onmouseenter = Swal.stopTimer;
+                                    toast.onmouseleave = Swal.resumeTimer;
+                                }
+                            });
+
                         }
                     },
                     error: function(error) {
@@ -87,12 +128,37 @@ if (isset($_SESSION['flash'])) {
 
 
                         if (res.success) {
-                            alert('Продуктът беше премахнат от любими');
+                            Swal.fire({
+                                title: 'Продуктът беше премахнат от любими',
+                                icon: 'success',
+                                toast: true,
+                                position: 'top',
+                                showConfirmButton: false,
+                                timer: 8000,
+                                timerProgressBar: true,
+                                didOpen: (toast) => {
+                                    toast.onmouseenter = Swal.stopTimer;
+                                    toast.onmouseleave = Swal.resumeTimer;
+                                }
+                            });
+
                             let addBtn = $(`<button class="btn btn-primary btn-sm add-favorite"  data-product="${productId}">Добави в любими</button>`);
                             btn.replaceWith(addBtn);
 
                         } else {
-                            alert('Възникна грешка ' + res.error);
+                            Swal.fire({
+                                title: 'Възникна грешка ' + res.error,
+                                icon: 'error',
+                                toast: true,
+                                position: 'top',
+                                showConfirmButton: false,
+                                timer: 8000,
+                                timerProgressBar: true,
+                                didOpen: (toast) => {
+                                    toast.onmouseenter = Swal.stopTimer;
+                                    toast.onmouseleave = Swal.resumeTimer;
+                                }
+                            });
                         }
                     },
                     error: function(error) {
@@ -120,9 +186,16 @@ if (isset($_SESSION['flash'])) {
                         <li class="nav-item">
                             <a class="nav-link <?php echo ($page == 'contacts' ? 'active' : ''); ?>" href="?page=contacts">Контакти</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link <?php echo ($page == 'add_product' ? 'active' : ''); ?>" href="?page=add_product">Добави продукт</a>
+                        <?php
+                        if (is_admin()) {
+                            echo '
+                            <li class="nav-item">
+                            <a class="nav-link ' . ($page == 'add_product' ? 'active' : '') . '" href="?page=add_product">Добави продукт</a>
                         </li>
+                            ';
+                        }
+                        ?>
+
                     </ul>
 
                     <div class="d-flex flex-row gap-3">
@@ -149,11 +222,28 @@ if (isset($_SESSION['flash'])) {
     <main class="container py-4" style="min-height:80vh;">
         <?php
         if (isset($flash['message'])) {
+            $type_icons = [
+                'success' => 'success',
+                'danger' => 'danger',
+                'warning' => 'warning',
+            ];
+
             echo '
-            <div class="alert alert-' . $flash['message']['type'] . '" role="alert">
-                ' . $flash['message']['text'] . '
-                </div>
-            ';
+            <script>
+                Swal.fire({
+                title: \'' . $flash['message']['text'] . '\',
+                icon: \'' . $type_icons[$flash['message']['type']] . '\',
+                toast: true,
+                position: \'top\',
+                showConfirmButton: false,
+                timer: 8000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.onmouseenter = Swal.stopTimer;
+                    toast.onmouseleave = Swal.resumeTimer;
+                }
+            });
+                </script>';
         }
 
         if (file_exists('pages/' . $page . '.php')) {

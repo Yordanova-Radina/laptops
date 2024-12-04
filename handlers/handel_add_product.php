@@ -7,6 +7,14 @@ require_once('../db.php');
 //debug($_FILES);
 //exit;
 
+if (!is_admin()) {
+    $_SESSION['flash']['message']['type'] = 'warning';
+    $_SESSION['flash']['message']['text'] = 'Нямате достъп до тази страница!';
+
+    header('Location: ../index.php');
+    exit;
+}
+
 $title = trim($_POST['title'] ?? '');
 $price = trim($_POST['price'] ?? '');
 
